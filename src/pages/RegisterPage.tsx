@@ -58,6 +58,9 @@ const RegisterPage: React.FC = () => {
             Зарегистрироваться
           </CustomButton>
         </form>
+        <Typography variant="body2" sx={{ mt: 2 }}>
+        Уже есть аккаунт? <a href="/login" style={{ color: '#1976d2' }}>Войти</a>
+        </Typography>
       </Box>
     </Container>
   );

@@ -1,6 +1,6 @@
 // src/pages/DataPage.tsx
 import React from 'react';
-import { Container, Typography, Paper, Box } from '@mui/material';
+import { Container, Typography, Paper } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store/store';
 import { fetchRandomQuote } from '../store/quotesSlice';

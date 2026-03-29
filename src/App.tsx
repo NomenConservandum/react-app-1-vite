@@ -1,42 +1,60 @@
 // src/App.tsx
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { CommonWrapper } from './wrappers/CommonWrapper';
-import { AuthWrapper } from './wrappers/AuthWrapper';
 
-// Заглушки страниц (их нужно будет создать в папке src/pages/)
-const LandingPage = () => <div>Лендинг</div>;
-const LoginPage = () => <div>Авторизация</div>;
-const RegisterPage = () => <div>Регистрация</div>;
-const ProfilePage = () => <div>Личный кабинет</div>;
-const DataPage = () => <div>Данные после авторизации (Цитаты)</div>;
-const NotFoundPage = () => <div>404: Страница не найдена. <a href="/">На главную</a></div>;
+
+import { Routes, Route } from "react-router-dom";
+import { CssBaseline, ThemeProvider, Box, CircularProgress } from "@mui/material";
+import { createContext, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { darkTheme, lightTheme } from "./theme/theme";
+import { routes } from "./routes";
+import { checkAuth } from "./store/user/thunks";
+import { AppDispatch, RootState } from "./store/store";
+import { CommonWrapper } from "./wrappers/CommonWrapper";
+
+export const ColorModeContext = createContext({
+  toggleTheme: () => { }
+});
 
 function App() {
-  return (
-    <BrowserRouter>
-      <CommonWrapper>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          
-          {/* Защищенные маршруты */}
-          <Route path="/profile" element={
-            <AuthWrapper>
-              <ProfilePage />
-            </AuthWrapper>
-          } />
-          <Route path="/quotes" element={
-            <AuthWrapper>
-              <DataPage />
-            </AuthWrapper>
-          } />
+  const [darkMode, setDarkMode] = useState(true);
+  const [isInit, setIsInit] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </CommonWrapper>
-    </BrowserRouter>
+  const toggleTheme = () => {
+    setDarkMode((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      if (localStorage.getItem('token')) {
+        await dispatch(checkAuth());
+      }
+      setIsInit(true);
+    };
+    init();
+  }, [dispatch]);
+
+  if (!isInit) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <ColorModeContext.Provider value={{ toggleTheme }}>
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <CssBaseline />
+        <CommonWrapper>
+          <Routes>
+            {routes.map(router => (
+              <Route key={router.path + router.label} path={router.path} element={router.element} />
+            ))}
+          </Routes>
+        </CommonWrapper>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
 

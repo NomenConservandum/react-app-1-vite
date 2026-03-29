@@ -4,7 +4,11 @@ import { store } from '../store/store';
 import { setLoading, setError } from '../store/settingsSlice';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000', // Замените на URL вашего API
+  baseURL: process.env.REACT_APP_API_URL, 
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 api.interceptors.request.use((config) => {

@@ -49,6 +49,9 @@ const LoginPage: React.FC = () => {
             Войти
           </CustomButton>
         </form>
+        <Typography variant="body2" sx={{ mt: 2 }}>
+        Нет аккаунта? <a href="/register" style={{ color: '#1976d2' }}>Зарегистрироваться</a>
+        </Typography>
       </Box>
     </Container>
   );
