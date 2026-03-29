@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../utils/api"; // ваш axios инстанс
-import { User } from "../../entities/user/types";
+import api from "../../utils/api";
+import type { User, RegisterUserData } from "../../types/api";
 
 export const login = createAsyncThunk(
   "user/login",
@@ -31,6 +31,18 @@ export const checkAuth = createAsyncThunk(
     } catch (e: any) {
       localStorage.removeItem("token");
       return rejectWithValue("Session expired");
+    }
+  }
+);
+
+export const registerUser = createAsyncThunk(
+  "user/register",
+  async (data: RegisterUserData, { rejectWithValue }) => {
+    try {
+      await api.post("/api/Auth/Registration", data);
+      return; 
+    } catch (e: any) {
+      return rejectWithValue(e.response?.data?.title || "Registration error");
     }
   }
 );

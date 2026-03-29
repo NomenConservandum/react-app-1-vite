@@ -19,6 +19,9 @@ const NavBar: React.FC = () => {
         <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleTheme} color="inherit">
           {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
         </IconButton>
+        <Button color="inherit" onClick={() => navigate('/movies')}>Фильмы</Button>
+        <Button color="inherit" onClick={() => navigate('/genres')}>Жанры</Button>
+        <Button color="inherit" onClick={() => navigate('/directors')}>Режиссеры</Button>
       </Toolbar>
     </AppBar>
   );

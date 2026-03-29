@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { darkTheme, lightTheme } from "./theme/theme";
 import { routes } from "./routes";
 import { checkAuth } from "./store/user/thunks";
-import { AppDispatch, RootState } from "./store/store";
+import type { AppDispatch, RootState } from "./store/store";
 import { CommonWrapper } from "./wrappers/CommonWrapper";
 
 export const ColorModeContext = createContext({

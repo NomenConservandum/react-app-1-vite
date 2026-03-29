@@ -1,7 +1,7 @@
 // src/wrappers/CommonWrapper.tsx
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store/store';
+import type { RootState } from '../store/store';
 import { setError } from '../store/settingsSlice';
 import { CircularProgress, Snackbar, Alert, Backdrop } from '@mui/material';
 

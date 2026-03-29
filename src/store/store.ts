@@ -1,14 +1,11 @@
-// src/store/store.ts
-import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './userSlice';
-import settingsReducer from './settingsSlice';
-import quotesReducer from './quotesSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./user/userSlice";
+import settingsReducer from "./settingsSlice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     settings: settingsReducer,
-    quotes: quotesReducer,
   },
 });
 

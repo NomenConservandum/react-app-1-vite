@@ -1,6 +1,6 @@
 // src/utils/userService.ts
 import api from './api';
-import { User } from '../types/api';
+import type { User } from '../types/api';
 
 export const userService = {
   // Получение данных текущего авторизованного пользователя

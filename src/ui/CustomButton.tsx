@@ -1,7 +1,7 @@
 // src/ui/CustomButton.tsx
 import React from 'react';
-import { Button, ButtonProps, Tooltip } from '@mui/material';
-
+import { Button, Tooltip } from "@mui/material";
+import type { ButtonProps } from "@mui/material";
 interface ICustomButton extends ButtonProps {
   tooltipText?: string; // Для соблюдения грамотного UI/UX 
 }

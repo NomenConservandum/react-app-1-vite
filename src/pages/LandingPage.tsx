@@ -7,8 +7,9 @@ import {
   Card, 
   CardContent, 
   useTheme,
-  Grid
 } from '@mui/material';
+
+import { Grid } from "@mui/material";
 
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SecurityIcon from '@mui/icons-material/Security';

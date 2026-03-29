@@ -2,7 +2,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { RootState } from '../store/store';
+import type { RootState } from "../store/store";
 
 export const AuthWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuth = useSelector((state: RootState) => state.user.isAuth);

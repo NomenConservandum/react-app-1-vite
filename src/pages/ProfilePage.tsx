@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Typography, Paper, Box, Avatar, Divider } from '@mui/material';
-import { RootState } from '../store/store';
-import { setUser, logout } from '../store/userSlice';
+import type { RootState } from "../store/store";
+import { setUser, logout } from '../store/user/userSlice';
 import { userService } from '../utils/userService';
 import { CustomButton } from '../ui/CustomButton';
 import { useNavigate } from 'react-router-dom';

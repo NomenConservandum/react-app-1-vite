@@ -1,6 +1,7 @@
 // src/ui/CustomInput.tsx
 import React from 'react';
-import { TextField, TextFieldProps } from '@mui/material';
+import { TextField } from "@mui/material";
+import type { TextFieldProps } from "@mui/material";
 
 // Строгая типизация пропсов 
 export const CustomInput: React.FC<TextFieldProps> = (props) => {

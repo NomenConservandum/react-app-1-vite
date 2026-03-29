@@ -1,57 +1,66 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../store/userSlice';
-import { authService } from '../utils/authService';
-import { CustomInput } from '../ui/CustomInput';
-import { CustomButton } from '../ui/CustomButton';
+import { useDispatch, useSelector } from 'react-redux';
 import { Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { CustomInput } from '../ui/CustomInput';
+import { CustomButton } from '../ui/CustomButton';
+import { login } from '../store/user/thunks';
+import type { AppDispatch, RootState } from '../store/store';
 
 const LoginPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  
+  // Берем состояние из настроек (для лоадера)
+  const { isLoading } = useSelector((state: RootState) => state.settings);
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const userData = await authService.login({ email, password });
-      dispatch(setUser(userData.user)); // Сохраняем пользователя в Store 
-      navigate('/profile'); // Переход в личный кабинет 
+      // Вызываем thunk и "разворачиваем" результат
+      await dispatch(login({ email, password })).unwrap();
+      navigate('/profile'); 
     } catch (err) {
-      // Ошибка ловится глобально [cite: 13]
+      // Ошибка уже записана в settingsSlice интерцептором, 
+      // поэтому здесь просто прерываем выполнение
     }
   };
 
   return (
     <Container maxWidth="xs">
       <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography variant="h5">Вход в систему</Typography>
-        <form onSubmit={handleLogin}>
+        <Typography variant="h5">Вход</Typography>
+        <Box component="form" onSubmit={handleLogin} sx={{ mt: 1, width: '100%' }}>
           <CustomInput 
             label="Email" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
+            disabled={isLoading}
           />
           <CustomInput 
             label="Пароль" 
             type="password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
+            disabled={isLoading}
           />
           <CustomButton 
             type="submit" 
             fullWidth 
-            sx={{ mt: 2 }}
-            tooltipText="Войти в личный кабинет"
+            sx={{ mt: 3 }}
+            disabled={isLoading}
+            tooltipText="Войти в систему"
           >
-            Войти
+            {isLoading ? 'Вход...' : 'Войти'}
           </CustomButton>
-        </form>
-        <Typography variant="body2" sx={{ mt: 2 }}>
-        Нет аккаунта? <a href="/register" style={{ color: '#1976d2' }}>Зарегистрироваться</a>
-        </Typography>
+          
+          <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
+            Нет аккаунта? <CustomButton variant="text" onClick={() => navigate('/register')}>Зарегистрироваться</CustomButton>
+          </Typography>
+        </Box>
       </Box>
     </Container>
   );

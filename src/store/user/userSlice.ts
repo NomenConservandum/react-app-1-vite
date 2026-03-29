@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { login, checkAuth } from "./thunks";
-import { User } from "../../entities/user/types";
+import type { PayloadAction } from "@reduxjs/toolkit"; 
+import type { User } from "../../types/api";
 
 interface UserState {
   user: User | null;
@@ -21,7 +22,14 @@ const userSlice = createSlice({
       state.isAuth = false;
       state.token = null;
       localStorage.removeItem('token');
-    }
+    },
+    setUser: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
+            state.user = action.payload.user;
+            state.token = action.payload.accessToken;
+            state.isAuth = true;
+            // Важно сохранять токен, чтобы после перезагрузки страницы он подтянулся в initialState
+            localStorage.setItem('token', action.payload.accessToken);
+        },
   },
   extraReducers: (builder) => {
     builder
@@ -41,5 +49,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { logout } = userSlice.actions;
+export const { setUser, logout } = userSlice.actions;
 export default userSlice.reducer;

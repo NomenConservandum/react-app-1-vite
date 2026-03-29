@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Container, Typography, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { CustomInput } from '../ui/CustomInput';
 import { CustomButton } from '../ui/CustomButton';
-import { authService } from '../utils/authService';
-import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../store/user/thunks';
+import type { AppDispatch, RootState } from '../store/store';
 
 const RegisterPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { isLoading } = useSelector((state: RootState) => state.settings);
+
   const [formData, setFormData] = useState({
     firstName: '',
     secondName: '',
@@ -17,50 +22,55 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await authService.register(formData);
+      await dispatch(registerUser(formData)).unwrap();
+      // После успешной регистрации отправляем на логин
       navigate('/login');
-    } catch (e) {
-      // Ошибка обработается автоматически интерцептором в api.ts [cite: 13]
+    } catch (err) {
+      // Обработка ошибки
     }
   };
 
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography component="h1" variant="h5">Регистрация</Typography>
-        <form onSubmit={handleSubmit}>
+      <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography variant="h5">Регистрация</Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
           <CustomInput 
             label="Имя" 
             onChange={(e) => setFormData({...formData, firstName: e.target.value})} 
+            disabled={isLoading}
           />
           <CustomInput 
             label="Фамилия" 
             onChange={(e) => setFormData({...formData, secondName: e.target.value})} 
+            disabled={isLoading}
           />
           <CustomInput 
             label="Email" 
-            type="email" 
-            required 
+            type="email"
             onChange={(e) => setFormData({...formData, email: e.target.value})} 
+            disabled={isLoading}
           />
           <CustomInput 
             label="Пароль" 
-            type="password" 
-            required 
+            type="password"
             onChange={(e) => setFormData({...formData, password: e.target.value})} 
+            disabled={isLoading}
           />
           <CustomButton 
             type="submit" 
             fullWidth 
             sx={{ mt: 3 }}
-            tooltipText="Нажмите, чтобы создать аккаунт"
+            disabled={isLoading}
+            tooltipText="Создать аккаунт"
           >
-            Зарегистрироваться
+            {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
           </CustomButton>
-        </form>
-        <Typography variant="body2" sx={{ mt: 2 }}>
-        Уже есть аккаунт? <a href="/login" style={{ color: '#1976d2' }}>Войти</a>
-        </Typography>
+          
+          <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
+            Уже есть аккаунт? <CustomButton variant="text" onClick={() => navigate('/login')}>Войти</CustomButton>
+          </Typography>
+        </Box>
       </Box>
     </Container>
   );
