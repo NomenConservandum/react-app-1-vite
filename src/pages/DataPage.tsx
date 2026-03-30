@@ -1,46 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  Container, Paper, Typography, Box, Divider, Fade, TextField, 
-  Grid, Avatar, Card, CardContent 
-} from '@mui/material';
-import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
-import AddCommentIcon from '@mui/icons-material/AddComment';
+import { Container, Paper, Typography, Box, Divider, Fade, TextField, Grid, Card, CardContent } from '@mui/material';
 import HistoryIcon from '@mui/icons-material/History';
-
 import { fetchRandomQuote, postQuote, fetchQuotesList } from '../store/quotesSlice';
 import type { RootState, AppDispatch } from '../store/store';
 import { CustomButton } from '../ui/CustomButton';
 
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+
+const PAGE_LIMIT = 10; // Сколько цитат грузим за раз
+
 const DataPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  
-  // Достаем данные из нашего обновленного слайса
   const { currentQuote, allQuotes } = useSelector((state: RootState) => state.quotes);
   const { isLoading } = useSelector((state: RootState) => state.settings);
-  
-  const [newQuoteText, setNewQuoteText] = useState('');
 
-  // 1. При загрузке страницы получаем и случайную цитату, и список (первые 10 штук)
-  useEffect(() => {
-    dispatch(fetchRandomQuote());
-    dispatch(fetchQuotesList({ offset: 0, limit: 10 }));
-  }, [dispatch]);
+  const [newQuoteText, setNewQuoteText] = useState('');
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const handleRefreshRandom = () => dispatch(fetchRandomQuote());
 
+  // Первичная загрузка
+  useEffect(() => {
+    dispatch(fetchRandomQuote());
+    loadInitialQuotes();
+  }, [dispatch]);
+
+  const loadInitialQuotes = async () => {
+    const result = await dispatch(fetchQuotesList({ offset: 0, limit: PAGE_LIMIT }));
+    // Если пришло меньше, чем просили, значит дальше пусто
+    if (result.payload.length < PAGE_LIMIT) setHasMore(false);
+  };
+
+  const handleLoadMore = async () => {
+    const nextOffset = offset + PAGE_LIMIT;
+    const result = await dispatch(fetchQuotesList({ offset: nextOffset, limit: PAGE_LIMIT }));
+    
+    if (result.payload.length < PAGE_LIMIT) {
+      setHasMore(false); // Скрываем кнопку, если данных больше нет
+    }
+    setOffset(nextOffset);
+  };
+
   const handlePublish = async () => {
     if (!newQuoteText.trim()) return;
-    
-    // Отправляем цитату (внутри thunk она уйдет как query-параметр)
     await dispatch(postQuote(newQuoteText));
-    setNewQuoteText(''); // Очищаем поле ввода
+    setNewQuoteText('');
+    setOffset(0); // Сбрасываем пагинацию при новом посте
+    setHasMore(true);
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>
-      
-      {/* СЕКЦИЯ 1: Случайная цитата (Вдохновение) */}
+    <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>{/* СЕКЦИЯ 1: Случайная цитата (Вдохновение) */}
       <Fade in={true} timeout={600}>
         <Paper 
           elevation={4} 
@@ -95,50 +108,52 @@ const DataPage: React.FC = () => {
         </Box>
       </Paper>
 
+      {/* СЕКЦИЯ 3: Лента цитат*/}
+
       <Divider sx={{ mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.disabled' }}>
           <HistoryIcon fontSize="small" />
-          <Typography variant="body2" sx={{ textTransform: 'uppercase', tracking: 1 }}>Лента цитат</Typography>
+          <Typography variant="body2">ЛЕНТА ЦИТАТ</Typography>
         </Box>
       </Divider>
 
-      {/* СЕКЦИЯ 3: Список всех цитат (Лента) */}
       <Grid container spacing={3}>
-        {allQuotes.length > 0 ? (
-          allQuotes.map((item, index) => (
-            <Grid item xs={12} key={index}>
-              <Fade in={true} timeout={400 + index * 100}>
-                <Card variant="outlined" sx={{ borderRadius: 3, transition: '0.3s', '&:hover': { boxShadow: 3 } }}>
-                  <CardContent>
-                    <Typography variant="body1" sx={{ mb: 2, lineHeight: 1.6 }}>
-                      {item.quoteText}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Avatar sx={{ width: 24, height: 24, fontSize: '0.8rem', bgcolor: 'primary.light' }}>
-                          {item.username[0].toUpperCase()}
-                        </Avatar>
-                        <Typography variant="subtitle2" color="primary.main">
-                          {item.username}
-                        </Typography>
-                      </Box>
-                      <Typography variant="caption" color="text.disabled">
-                        Добавлено: {item.creationDate}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Fade>
-            </Grid>
-          ))
-        ) : (
-          <Grid item xs={12}>
-            <Box sx={{ textAlign: 'center', py: 5 }}>
-              <Typography color="text.disabled">Тут пока тихо... Напишите что-нибудь!</Typography>
-            </Box>
+        {allQuotes.map((item, index) => (
+          <Grid item xs={12} key={`${item.creationDate}-${index}`}>
+            <Card variant="outlined" sx={{ borderRadius: 3 }}>
+              <CardContent>
+                <Typography variant="body1" sx={{ mb: 2 }}>{item.quoteText}</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="subtitle2" color="primary">@{item.username}</Typography>
+                  <Typography variant="caption" color="text.disabled">
+                    {item.creationDate} {/* Используем строку напрямую, как шлет бэк */}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
           </Grid>
-        )}
+        ))}
       </Grid>
+
+      {/* КНОПКА ПАГИНАЦИИ */}
+      {hasMore && allQuotes.length > 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <CustomButton 
+            onClick={handleLoadMore} 
+            variant="outlined" 
+            disabled={isLoading}
+            sx={{ px: 4 }}
+          >
+            {isLoading ? 'Загрузка...' : 'Показать еще'}
+          </CustomButton>
+        </Box>
+      )}
+
+      {!hasMore && allQuotes.length > 0 && (
+        <Typography align="center" color="text.disabled" sx={{ mt: 4, fontStyle: 'italic' }}>
+          Вы просмотрели все цитаты
+        </Typography>
+      )}
     </Container>
   );
 };
