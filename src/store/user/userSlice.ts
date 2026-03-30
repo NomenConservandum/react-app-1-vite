@@ -30,16 +30,17 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // Этот экшен для логина (когда есть и юзер, и токен)
+    // Это для авторизации (когда есть и пользователь, и токен)
     setAuth: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
       state.isAuth = true;
     },
-    // Этот экшен ТОЛЬКО для обновления данных профиля
+    // Это только для обновления данных профиля
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
     },
+    // Это для выхода
     logout: (state) => {
       state.user = null;
       state.accessToken = null;

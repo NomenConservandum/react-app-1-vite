@@ -47,16 +47,6 @@ export interface QuoteResponse {
   creationDate: string;
 }
 
-interface QuotesState {
-  currentQuote: QuoteResponse | null;
-  allQuotes: QuoteResponse[];
-}
-
-const initialState: QuotesState = {
-  currentQuote: null,
-  allQuotes: [],
-};
-
 // Публикация цитаты через Query-параметр
 export const postQuote = createAsyncThunk(
   'quotes/post',

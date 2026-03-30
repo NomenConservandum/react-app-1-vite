@@ -4,16 +4,8 @@ import {
   Container, 
   Typography, 
   Stack, 
-  Card, 
-  CardContent, 
   useTheme,
 } from '@mui/material';
-
-import { Grid } from "@mui/material";
-
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
-import SecurityIcon from '@mui/icons-material/Security';
-import DevicesIcon from '@mui/icons-material/Devices';
 
 import { useNavigate } from 'react-router-dom';
 import { CustomButton } from '../ui/CustomButton';
@@ -23,24 +15,6 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const { toggleTheme } = useContext(ColorModeContext);
-
-  const features = [
-    {
-      icon: <SecurityIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
-      title: 'Безопасность',
-      desc: 'Надежная авторизация с использованием JWT токенов и защищенных роутов.'
-    },
-    {
-      icon: <RocketLaunchIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
-      title: 'Производительность',
-      desc: 'Быстрая работа интерфейса благодаря React 18 и оптимизированному Redux Toolkit.'
-    },
-    {
-      icon: <DevicesIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
-      title: 'Адаптивность',
-      desc: 'Интерфейс отлично выглядит как на десктопах, так и на мобильных устройствах.'
-    }
-  ];
 
   return (
     <Box>
@@ -64,7 +38,7 @@ const LandingPage: React.FC = () => {
               fontSize: { xs: '2.5rem', md: '3.75rem' }
             }}
           >
-            Управляйте данными эффективно
+            Банк Цитат
           </Typography>
           <Typography 
             variant="h5" 
@@ -73,7 +47,7 @@ const LandingPage: React.FC = () => {
             paragraph
             sx={{ mb: 6 }}
           >
-            Современная платформа на React и TypeScript с полной интеграцией вашего API.
+            Платформа для обмена цитатами.
           </Typography>
           
           <Stack 
@@ -88,7 +62,7 @@ const LandingPage: React.FC = () => {
               tooltipText="Создать новый аккаунт"
               fullWidth={false}
             >
-              Начать работу
+              Начать обмен цитатами
             </CustomButton>
             <CustomButton 
               size="large" 
@@ -102,38 +76,6 @@ const LandingPage: React.FC = () => {
           </Stack>
         </Container>
       </Box>
-
-      <Container sx={{ py: { xs: 6, md: 10 } }}>
-        <Grid container spacing={4}>
-        {features.map((f, index) => (
-            <Grid size={{ xs: 12, md: 4 }} key={index}> 
-            <Card 
-                sx={{ 
-                height: '100%', 
-                textAlign: 'center', 
-                display: 'flex', 
-                flexDirection: 'column',
-                alignItems: 'center',
-                p: 2,
-                boxShadow: 2
-                }}
-            >
-                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-                {f.icon}
-                </Box>
-                <CardContent sx={{ flexGrow: 1 }}>
-                <Typography gutterBottom variant="h5" sx={{ fontWeight: 600 }}>
-                    {f.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    {f.desc}
-                </Typography>
-                </CardContent>
-            </Card>
-            </Grid>
-        ))}
-        </Grid>
-      </Container>
     </Box>
   );
 };
