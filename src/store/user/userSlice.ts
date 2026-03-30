@@ -43,8 +43,7 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Здесь можно добавить обработку thunks (login.fulfilled и т.д.)
-    // Не забывайте сохранять объект в localStorage в самих thunks или сервисе!
+    // Здесь можно добавить обработку thunks (login.fulfilled и т.д.)?
   }
 });
 

@@ -18,3 +18,5 @@ root.render(
     </Provider>
   </React.StrictMode>
 );
+
+// Этот файл по факту не нужен

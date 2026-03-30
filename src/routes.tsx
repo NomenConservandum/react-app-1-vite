@@ -50,7 +50,7 @@ export const routes: IRoute[] = [
     isPrivate: true 
   },
 
-  // --- 3 Уникальные страницы (ТЗ) ---
+  // --- 3 Уникальные страницы (согласно ТЗ) ---
   { 
     path: "/movies", 
     label: "Фильмы", 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Chip, Stack, Paper } from '@mui/material';
 import { movieService } from "../utils/movieService";
-import type { Genre } from "../utils/movieService"; // Или Director
+import type { Genre } from "../utils/movieService";
 
 const GenresPage: React.FC = () => {
   const [genres, setGenres] = useState<Genre[]>([]);

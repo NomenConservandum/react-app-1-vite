@@ -2,8 +2,10 @@
 import React from 'react';
 import { Button, Tooltip } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
+
+// Для удобства пользователя
 interface ICustomButton extends ButtonProps {
-  tooltipText?: string; // Для соблюдения грамотного UI/UX 
+  tooltipText?: string;
 }
 
 export const CustomButton: React.FC<ICustomButton> = ({ children, tooltipText, ...props }) => {

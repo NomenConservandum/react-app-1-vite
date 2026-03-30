@@ -15,7 +15,6 @@ export const authService = {
   },
 
   check: async (): Promise<User> => {
-    // Делаем GET запрос на эндпоинт проверки
     const response = await api.get<User>('/api/Auth/Check'); 
     return response.data;
   }

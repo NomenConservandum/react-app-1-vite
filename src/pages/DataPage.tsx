@@ -7,7 +7,7 @@ import { CustomButton } from '../ui/CustomButton';
 
 const DataPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { currentQuote } = useSelector((state: RootState) => state.quotes);
+  const { currentQuote } = useSelector((state: RootState) => state.quotes); // FIX: надо сделать тип для цитат
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>

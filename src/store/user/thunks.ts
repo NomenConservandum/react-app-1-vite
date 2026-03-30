@@ -6,7 +6,6 @@ export const login = createAsyncThunk(
   "user/login",
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      // Путь из вашего swagger: /api/Auth/Login
       const response = await api.post("/api/Auth/Login", data);
       
       const token = response.data;

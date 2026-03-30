@@ -1,4 +1,3 @@
-// src/store/quotesSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
 import { setLoading, setError } from './settingsSlice';
@@ -7,7 +6,7 @@ export const fetchRandomQuote = createAsyncThunk(
   'quotes/fetchRandom',
   async (_, { dispatch }) => {
     try {
-      dispatch(setLoading(true)); // Использование action из другого слайса
+      dispatch(setLoading(true));
       const response = await api.get('/api/Quote/GetRand');
       return response.data;
     } catch (error: unknown) {
