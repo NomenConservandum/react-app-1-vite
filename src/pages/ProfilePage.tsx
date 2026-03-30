@@ -28,7 +28,7 @@ const ProfilePage: React.FC = () => {
   const getProfile = async () => {
     try {
       setIsFetching(true);
-      const data = await userService.getMyProfile(); // data это {id, firstName, email...}
+      const data = await userService.getMyProfile();
       
       if (data) {
         dispatch(setUser(data)); 
