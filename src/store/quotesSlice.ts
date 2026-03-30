@@ -39,12 +39,19 @@ export const postQuote = createAsyncThunk(
   async (quoteText: string, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      // Отправляем объект, который ожидает контроллер
-      const response = await api.post('/api/Quote/PostQuote', { quoteText });
-      dispatch(fetchRandomQuote()); // Обновляем текущую цитату после публикации
+
+      // Передаем quoteText как query-параметр
+      const response = await api.post('/api/Quote', null, { 
+        params: {
+          quoteText: quoteText // Axios сам сделает encodeURIComponent и добавит ?quoteText=...
+        }
+      });
+
+      dispatch(fetchRandomQuote()); 
       return response.data;
     } catch (error: any) {
-      dispatch(setError(error.response?.data?.message || 'Не удалось опубликовать цитату'));
+      console.error("Ошибка при публикации:", error.response?.data || error.message);
+      dispatch(setError(error.response?.data?.message || 'Не удалось опубликовать'));
       throw error;
     } finally {
       dispatch(setLoading(false));
