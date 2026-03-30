@@ -27,22 +27,26 @@ const initialState: UserState = {
 };
 
 const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
+    // Этот экшен для логина (когда есть и юзер, и токен)
+    setAuth: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
       state.isAuth = true;
     },
+    // Этот экшен ТОЛЬКО для обновления данных профиля
+    setUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+    },
     logout: (state) => {
       state.user = null;
-      state.isAuth = false;
       state.accessToken = null;
-      localStorage.removeItem('token');
-    },
-  },
+      state.isAuth = false;
+    }
+  }
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setAuth, setUser, logout } = userSlice.actions;
 export default userSlice.reducer;
