@@ -34,4 +34,22 @@ const quotesSlice = createSlice({
   },
 });
 
+export const postQuote = createAsyncThunk(
+  'quotes/post',
+  async (quoteText: string, { dispatch }) => {
+    try {
+      dispatch(setLoading(true));
+      // Отправляем объект, который ожидает контроллер
+      const response = await api.post('/api/Quote/PostQuote', { quoteText });
+      dispatch(fetchRandomQuote()); // Обновляем текущую цитату после публикации
+      return response.data;
+    } catch (error: any) {
+      dispatch(setError(error.response?.data?.message || 'Не удалось опубликовать цитату'));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
 export default quotesSlice.reducer;

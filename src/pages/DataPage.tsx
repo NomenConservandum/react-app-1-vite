@@ -1,118 +1,136 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, Paper, Typography, Box, Divider, Fade } from '@mui/material';
+import { Container, Paper, Typography, Box, Divider, Fade, TextField } from '@mui/material';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
-import { fetchRandomQuote } from '../store/quotesSlice';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import { fetchRandomQuote, postQuote } from '../store/quotesSlice';
 import type { RootState, AppDispatch } from '../store/store';
 import { CustomButton } from '../ui/CustomButton';
 
 const DataPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const currentQuote = useSelector((state: RootState) => state.quotes?.currentQuote);
+  const { currentQuote } = useSelector((state: RootState) => state.quotes);
   const { isLoading } = useSelector((state: RootState) => state.settings);
+  
+  const [newQuote, setNewQuote] = useState('');
 
-  // Загружаем первую цитату при входе
   useEffect(() => {
     if (!currentQuote) {
       dispatch(fetchRandomQuote());
     }
   }, [dispatch, currentQuote]);
 
-  const handleRefresh = () => {
-    dispatch(fetchRandomQuote());
+  const handleRefresh = () => dispatch(fetchRandomQuote());
+
+  const handlePublish = async () => {
+    if (!newQuote.trim()) return;
+    await dispatch(postQuote(newQuote));
+    setNewQuote(''); // Очищаем поле после публикации
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 8, mb: 4 }}>
-      <Fade in={true} timeout={1000}>
+    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+      {/* БЛОК 1: Просмотр цитаты */}
+      <Fade in={true} timeout={800}>
         <Paper 
-          elevation={6} 
+          elevation={4} 
           sx={{ 
-            p: { xs: 4, md: 8 }, 
+            p: { xs: 3, md: 6 }, 
             borderRadius: 4, 
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)',
-            position: 'relative',
+            textAlign: 'center', 
+            mb: 4, 
+            position: 'relative', 
             overflow: 'hidden',
-            border: '1px solid rgba(0,0,0,0.05)'
+            bgcolor: 'background.paper', // Адаптивный фон
+            border: '1px solid',
+            borderColor: 'divider'
           }}
         >
-          {/* Большая декоративная кавычка на фоне */}
           <FormatQuoteIcon 
             sx={{ 
               position: 'absolute', 
-              top: -20, 
-              left: -20, 
-              fontSize: '12rem', 
-              color: 'rgba(25, 118, 210, 0.05)', // Цвет основной темы с низкой прозрачностью
-              transform: 'rotate(180deg)'
+              top: -10, 
+              left: -10, 
+              fontSize: '10rem', 
+              color: 'primary.main', 
+              opacity: 0.07 
             }} 
           />
-
-          <Typography 
-            variant="h3" 
-            gutterBottom 
-            sx={{ 
-              fontWeight: 800, 
-              color: 'primary.main',
-              letterSpacing: -1,
-              mb: 4
-            }}
-          >
-            Цитата дня
-          </Typography>
           
-          <Divider sx={{ mb: 6, width: '40%', mx: 'auto', height: 3, borderRadius: 1, bgcolor: 'primary.light' }} />
+          <Typography variant="h4" gutterBottom color="primary" sx={{ fontWeight: 700 }}>
+            Мудрость сообщества
+          </Typography>
+          <Divider sx={{ my: 3, width: '40%', mx: 'auto' }} />
 
-          <Box sx={{ minHeight: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <Box sx={{ minHeight: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             {currentQuote ? (
               <>
-                <Typography 
-                  variant="h4" 
-                  sx={{ 
-                    fontStyle: 'italic', 
-                    lineHeight: 1.5,
-                    color: '#1f2937',
-                    fontWeight: 500,
-                    px: { md: 4 }
-                  }}
-                >
+                <Typography variant="h5" sx={{ fontStyle: 'italic', px: 2, color: 'text.primary' }}>
                   «{currentQuote.quoteText}»
                 </Typography>
-                
-                <Box sx={{ mt: 4, textAlign: 'right', width: '100%', pr: { md: 6 } }}>
-                  <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 600 }}>
-                    — {currentQuote.username || 'Неизвестный автор'}
-                  </Typography>
-                  <Typography variant="caption" color="text.disabled">
-                    Добавлено: {new Date(currentQuote.creationDate).toLocaleDateString()}
-                  </Typography>
-                </Box>
+                <Typography variant="subtitle1" sx={{ mt: 2, fontWeight: 600, color: 'text.secondary' }}>
+                  — {currentQuote.username}
+                </Typography>
               </>
             ) : (
-              <Typography variant="h5" color="text.disabled">
-                Нажмите кнопку ниже, чтобы получить мудрость...
-              </Typography>
+              <Typography color="text.disabled">Нажмите кнопку для загрузки...</Typography>
             )}
           </Box>
 
-          <Box sx={{ mt: 6 }}>
+          <CustomButton 
+            onClick={handleRefresh} 
+            disabled={isLoading} 
+            sx={{ mt: 4, borderRadius: 4, px: 4 }}
+          >
+            Следующая цитата
+          </CustomButton>
+        </Paper>
+      </Fade>
+
+      {/* БЛОК 2: Публикация новой цитаты (ИСПРАВЛЕННАЯ ТЕМА) */}
+      <Fade in={true} timeout={1200}>
+        <Paper 
+          elevation={2} 
+          sx={{ 
+            p: 4, 
+            borderRadius: 4, 
+            bgcolor: 'action.hover', // Мягкий адаптивный фон (чуть темнее/светлее основного)
+            border: '1px solid',
+            borderColor: 'divider'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+            <AddCommentIcon color="primary" />
+            <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+              Поделиться своей мыслью
+            </Typography>
+          </Box>
+          
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            variant="outlined"
+            placeholder="Введите текст вашей цитаты..."
+            value={newQuote}
+            onChange={(e) => setNewQuote(e.target.value)}
+            disabled={isLoading}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                bgcolor: 'background.paper', // Поле ввода всегда на контрастном фоне
+              }
+            }}
+          />
+
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <CustomButton 
-              onClick={handleRefresh} 
-              disabled={isLoading}
-              size="large"
-              variant="contained"
-              tooltipText="Получить новую случайную цитату из базы"
-              sx={{ 
-                px: 6, 
-                py: 2, 
-                borderRadius: '50px',
-                fontSize: '1.1rem',
-                textTransform: 'none',
-                boxShadow: 4
-              }}
+              onClick={handlePublish} 
+              disabled={isLoading || !newQuote.trim()}
+              tooltipText="Ваша цитата будет доступна всем пользователям"
+              sx={{ px: 4, borderRadius: 2 }}
             >
-              {isLoading ? 'Загрузка...' : 'Следующая цитата'}
+              Опубликовать
             </CustomButton>
           </Box>
         </Paper>

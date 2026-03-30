@@ -8,12 +8,13 @@ interface UserState {
   accessToken: string | null;
 }
 
-// Безопасное получение начального токена
+// Функция для извлечения токена при загрузке страницы
 const getInitialToken = (): string | null => {
   const data = localStorage.getItem('token');
   if (!data) return null;
   try {
-    return JSON.parse(data).accessToken;
+    const parsed = JSON.parse(data);
+    return parsed.accessToken || null;
   } catch {
     return null;
   }
@@ -29,7 +30,6 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // Вызывается после успешного логина или рефреша (если нужно вручную)
     setUser: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
@@ -42,9 +42,6 @@ const userSlice = createSlice({
       localStorage.removeItem('token');
     },
   },
-  extraReducers: (builder) => {
-    // Здесь можно добавить обработку thunks (login.fulfilled и т.д.)?
-  }
 });
 
 export const { setUser, logout } = userSlice.actions;
