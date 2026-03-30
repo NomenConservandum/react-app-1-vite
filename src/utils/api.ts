@@ -2,15 +2,16 @@
 import axios from 'axios';
 import { store } from '../store/store';
 import { setLoading, setError } from '../store/settingsSlice';
+import type { AxiosInstance } from "axios";
 
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
 });
+
 
 api.interceptors.request.use((config) => {
   store.dispatch(setLoading(true));
@@ -63,5 +64,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 export default api;
