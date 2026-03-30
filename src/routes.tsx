@@ -3,11 +3,9 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
-import DataPage from "./pages/DataPage";
-
-import MoviesPage from "./pages/MoviesPage";
-import GenresPage from "./pages/GenresPage";
-import DirectorsPage from "./pages/DirectorsPage";
+import QuotesListPage from "./pages/QuotesListPage";
+import RandomQuotePage from "./pages/RandomQuotePage";
+import CreateQuotePage from "./pages/CreateQuotePage";
 
 import { AuthWrapper } from "./wrappers/AuthWrapper";
 
@@ -43,30 +41,24 @@ export const routes: IRoute[] = [
     element: <AuthWrapper><ProfilePage /></AuthWrapper>,
     isPrivate: true 
   },
+
+  // --- Разделы Цитат (Вместо единого DataPage) ---
   { 
     path: "/quotes", 
-    label: "Цитаты", 
-    element: <AuthWrapper><DataPage /></AuthWrapper>,
-    isPrivate: true 
-  },
-
-  // --- 3 Уникальные страницы (согласно ТЗ) ---
-  { 
-    path: "/movies", 
-    label: "Фильмы", 
-    element: <AuthWrapper><MoviesPage /></AuthWrapper>,
+    label: "Лента цитат", 
+    element: <AuthWrapper><QuotesListPage /></AuthWrapper>,
     isPrivate: true 
   },
   { 
-    path: "/genres", 
-    label: "Жанры", 
-    element: <AuthWrapper><GenresPage /></AuthWrapper>,
+    path: "/quotes/random", 
+    label: "Случайная мысль", 
+    element: <AuthWrapper><RandomQuotePage /></AuthWrapper>,
     isPrivate: true 
   },
   { 
-    path: "/directors", 
-    label: "Режиссеры", 
-    element: <AuthWrapper><DirectorsPage /></AuthWrapper>,
+    path: "/quotes/create", 
+    label: "Добавить свою", 
+    element: <AuthWrapper><CreateQuotePage /></AuthWrapper>,
     isPrivate: true 
   },
 ];

@@ -26,7 +26,7 @@ export const darkTheme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage: 'none', // Убираем стандартное высветление в темной теме MUI
+          backgroundImage: 'none',
         },
       },
     },

@@ -40,7 +40,6 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      // ОТПРАВЛЯЕМ ТОЛЬКО ТЕ ПОЛЯ, КОТОРЫЕ ЖДЕТ БЭКЕНД
       const response = await api.post('/api/Auth/Login', {
         email: email,
         password: password
@@ -50,14 +49,11 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('token', JSON.stringify(response.data));
 
       // Обновляем Redux
-      // ВАЖНО: Если бэкенд присылает данные пользователя прямо в корне response.data, 
-      // используй response.data. Если в объекте user — response.data.user
       dispatch(setUser({ 
         user: response.data.user || response.data, 
         accessToken: response.data.accessToken 
       }));
 
-      // Теперь редирект должен сработать
       navigate('/profile');
 
     } catch (err: any) {
@@ -82,7 +78,6 @@ const LoginPage: React.FC = () => {
           </Alert>
         )}
 
-        {/* ПРИВЯЗЫВАЕМ ФУНКЦИЮ К ONSUBMIT ФОРМЫ */}
         <form onSubmit={handleLogin}>
           <TextField
             fullWidth

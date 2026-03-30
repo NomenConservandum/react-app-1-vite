@@ -1,129 +1,133 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Container, Typography, Paper, Box, Avatar, Divider, Skeleton, Alert } from '@mui/material';
-import type { RootState } from "../store/store";
-import { setUser, logout } from '../store/user/userSlice';
-import { userService } from '../utils/userService';
-import { CustomButton } from '../ui/CustomButton';
+import React from 'react';
+import { 
+  Container, Grid, Paper, Typography, Box, Avatar, 
+  Card, CardActionArea, CardContent, Divider 
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { 
+  MenuBook, 
+  AutoFixHigh, 
+  AddCircleOutline, 
+  Logout 
+} from '@mui/icons-material';
+
+import { logout } from '../store/user/userSlice';
+import type { RootState } from '../store/store';
+import { CustomButton } from '../ui/CustomButton';
 
 const ProfilePage: React.FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  // Берем данные пользователя из Redux
+  const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user);
-  
-  // Состояние для отслеживания процесса загрузки данных с сервера
-  const [isInitialLoading, setIsInitialLoading] = useState(!user);
-
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        // Запрос к API для получения данных текущего пользователя
-        const data = await userService.getMyProfile();
-        
-        // Сохраняем полученные данные в стор. 
-        // Передаем пустую строку в accessToken, так как он уже лежит в localStorage и обрабатывается интерцептором
-        dispatch(setUser({ user: data, accessToken: "" })); 
-      } catch (err) {
-        console.error("Ошибка при загрузке профиля:", err);
-        // Ошибки 401/500 будут также обработаны в CommonWrapper через интерцептор
-      } finally {
-        setIsInitialLoading(false);
-      }
-    };
-
-    loadProfile();
-  }, [dispatch]);
 
   const handleLogout = () => {
-    // Очищаем всё хранилище (наш JSON-объект с токенами)
-    localStorage.removeItem('token');
     dispatch(logout());
     navigate('/login');
   };
 
-  // 1. Состояние загрузки (Скелетоны)
-  if (isInitialLoading) {
-    return (
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-            <Skeleton variant="circular" width={80} height={80} sx={{ mb: 2 }} />
-            <Skeleton variant="text" width="60%" height={40} />
-          </Box>
-          <Divider sx={{ mb: 3 }} />
-          <Skeleton variant="rectangular" height={100} />
-        </Paper>
-      </Container>
-    );
-  }
+  // Данные для плиток навигации
+  const menuItems = [
+    {
+      title: 'Лента цитат',
+      description: 'Читать мысли других пользователей',
+      path: '/quotes',
+      icon: <MenuBook fontSize="large" color="primary" />,
+      color: '#e3f2fd'
+    },
+    {
+      title: 'Случайная мысль',
+      description: 'Получить порцию вдохновения',
+      path: '/quotes/random',
+      icon: <AutoFixHigh fontSize="large" color="secondary" />,
+      color: '#f3e5f5'
+    },
+    {
+      title: 'Добавить свою',
+      description: 'Поделиться своей мудростью',
+      path: '/quotes/create',
+      icon: <AddCircleOutline fontSize="large" sx={{ color: '#2e7d32' }} />,
+      color: '#e8f5e9'
+    }
+  ];
 
-  // 2. Если данных нет и загрузка завершена (например, ошибка сервера)
-  if (!user) {
-    return (
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Alert severity="warning">Не удалось загрузить данные профиля.</Alert>
-        <CustomButton onClick={() => navigate('/login')} sx={{ mt: 2 }}>
-          Вернуться к входу
-        </CustomButton>
-      </Container>
-    );
-  }
-
-  // 3. Основной интерфейс профиля
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-          <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', mb: 2, fontSize: '2rem' }}>
-            {/* Берем первую букву имени или юзернейма */}
-            {user.firstName?.[0] || user.firstName?.[0] || 'U'}
-            {user.secondName?.[0] || ''}
+    <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>
+      {/* Шапка профиля */}
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 4, mb: 4, textAlign: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Avatar 
+            sx={{ width: 100, height: 100, mb: 2, bgcolor: 'primary.main', fontSize: '2rem' }}
+          >
+            {user?.userName?.[0]?.toUpperCase() || 'U'}
           </Avatar>
-          <Typography variant="h4">Личный кабинет</Typography>
-        </Box>
-
-        <Divider sx={{ mb: 3 }} />
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="overline" color="textSecondary">Имя и фамилия</Typography>
-          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-            {/* Отображаем имя/фамилию или userName, если они не заполнены */}
-            {user.firstName || user.secondName 
-              ? `${user.firstName || ''} ${user.secondName || ''}`.trim() 
-              : user.firstName}
+          <Typography variant="h4" fontWeight="bold">
+            {user?.userName || 'Пользователь'}
           </Typography>
-        </Box>
-
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="overline" color="textSecondary">Электронная почта</Typography>
-          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-            {user.email}
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            {user?.email || 'email@example.com'}
           </Typography>
-        </Box>
-
-        <Box sx={{ display: 'flex', gap: 2 }}>
           <CustomButton 
-            fullWidth 
-            onClick={() => navigate('/quotes')} // Меняем путь с /movies на /quotes
-            tooltipText="Посмотреть случайные цитаты"
-          >
-            К цитатам
-          </CustomButton>
-          
-          <CustomButton 
-            fullWidth 
+            variant="outlined" 
             color="error" 
-            variant="outlined"
+            startIcon={<Logout />} 
             onClick={handleLogout}
-            tooltipText="Выйти из системы"
           >
-            Выйти
+            Выйти из системы
           </CustomButton>
         </Box>
       </Paper>
+
+      <Typography variant="h5" sx={{ mb: 3, fontWeight: 700 }}>
+        Управление контентом
+      </Typography>
+
+      {/* Плиточное меню (Dashboard) */}
+      <Grid container spacing={3}>
+        {menuItems.map((item, index) => (
+          <Grid item xs={12} sm={4} key={index}>
+            <Card 
+              elevation={2} 
+              sx={{ 
+                borderRadius: 4, 
+                transition: '0.3s', 
+                '&:hover': { transform: 'translateY(-5px)', boxShadow: 6 } 
+              }}
+            >
+              <CardActionArea onClick={() => navigate(item.path)} sx={{ height: '100%' }}>
+                <CardContent sx={{ textAlign: 'center', py: 4 }}>
+                  <Box 
+                    sx={{ 
+                      display: 'inline-flex', 
+                      p: 2, 
+                      borderRadius: '50%', 
+                      bgcolor: item.color, 
+                      mb: 2 
+                    }}
+                  >
+                    {item.icon}
+                  </Box>
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    {item.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {item.description}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Divider sx={{ my: 6 }} />
+
+      {/* Статистика или доп. инфо (заглушка) */}
+      <Box sx={{ p: 3, bgcolor: 'action.hover', borderRadius: 4, textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          Вы с нами с 2026 года. Опубликовано цитат: 12
+        </Typography>
+      </Box>
     </Container>
   );
 };

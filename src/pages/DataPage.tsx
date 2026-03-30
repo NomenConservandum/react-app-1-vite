@@ -53,7 +53,8 @@ const DataPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>{/* СЕКЦИЯ 1: Случайная цитата (Вдохновение) */}
+    <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>
+      {/* СЕКЦИЯ 1: Случайная цитата (Вдохновение) */}
       <Fade in={true} timeout={600}>
         <Paper 
           elevation={4} 
@@ -126,7 +127,7 @@ const DataPage: React.FC = () => {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="subtitle2" color="primary">@{item.username}</Typography>
                   <Typography variant="caption" color="text.disabled">
-                    {item.creationDate} {/* Используем строку напрямую, как шлет бэк */}
+                    {item.creationDate}
                   </Typography>
                 </Box>
               </CardContent>

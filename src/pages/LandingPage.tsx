@@ -14,7 +14,6 @@ import { Grid } from "@mui/material";
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SecurityIcon from '@mui/icons-material/Security';
 import DevicesIcon from '@mui/icons-material/Devices';
-import AdsClickIcon from '@mui/icons-material/AdsClick';
 
 import { useNavigate } from 'react-router-dom';
 import { CustomButton } from '../ui/CustomButton';
@@ -107,7 +106,6 @@ const LandingPage: React.FC = () => {
       <Container sx={{ py: { xs: 6, md: 10 } }}>
         <Grid container spacing={4}>
         {features.map((f, index) => (
-            // В новой версии MUI размеры передаются только через объект size
             <Grid size={{ xs: 12, md: 4 }} key={index}> 
             <Card 
                 sx={{ 

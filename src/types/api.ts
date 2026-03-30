@@ -6,7 +6,6 @@ export interface User {
   password?: string | null;
 }
 
-// ВАЖНО: Проверьте наличие 'export' здесь
 export type RegisterUserData = Omit<User, 'id'>; 
 
 export interface LoginUser {

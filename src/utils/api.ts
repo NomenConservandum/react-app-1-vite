@@ -52,7 +52,7 @@ api.interceptors.response.use(
 
           // Запрос на обновление (используем напрямую через axios, чтобы избежать цикла)
           // А то была у меня практика цикла на мобильном приложении, запускалось много
-          // Экземпляров одной и той же страницы, приложение висло, и было не круто
+          // экземпляров одной и той же страницы, приложение висло, и было не круто
           const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/Auth/Refresh`, {
             refreshToken
           });
@@ -64,7 +64,7 @@ api.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
           return api(originalRequest);
         } catch (refreshError) {
-          // Если Refresh Token тоже протух, то выходим из профиля
+          // Если Refresh Token тоже истёк, то выходим из профиля
           localStorage.removeItem('token');
           store.dispatch(logout());
           store.dispatch(setError("Сессия истекла, войдите заново"));
