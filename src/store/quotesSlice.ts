@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
 import { setLoading, setError } from './settingsSlice';
+import type { QuoteResponse } from '../types/api';
 
 export const fetchRandomQuote = createAsyncThunk(
   'quotes/fetchRandom',
@@ -19,7 +20,7 @@ export const fetchRandomQuote = createAsyncThunk(
 );
 
 interface QuotesState {
-  currentQuote: string | null;
+  currentQuote: QuoteResponse | null;
 }
 
 const quotesSlice = createSlice({

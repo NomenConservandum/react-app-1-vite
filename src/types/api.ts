@@ -21,3 +21,9 @@ export interface ProblemDetails {
   detail: string | null;
   instance: string | null;
 }
+
+export interface QuoteResponse {
+  quoteText: string;
+  username: string;
+  creationDate: string;
+}
