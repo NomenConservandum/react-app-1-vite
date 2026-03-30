@@ -1,51 +1,50 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, checkAuth } from "./thunks";
-import type { PayloadAction } from "@reduxjs/toolkit"; 
+import type { PayloadAction } from "@reduxjs/toolkit";
 import type { User } from "../../types/api";
 
 interface UserState {
   user: User | null;
   isAuth: boolean;
-  token: string | null;
+  accessToken: string | null;
 }
+
+// Безопасное получение начального токена
+const getInitialToken = (): string | null => {
+  const data = localStorage.getItem('token');
+  if (!data) return null;
+  try {
+    return JSON.parse(data).accessToken;
+  } catch {
+    return null;
+  }
+};
+
+const initialState: UserState = {
+  user: null,
+  isAuth: !!getInitialToken(),
+  accessToken: getInitialToken(),
+};
 
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    user: null,
-    isAuth: false,
-    token: localStorage.getItem('token'),
-  } as UserState,
+  initialState,
   reducers: {
+    // Вызывается после успешного логина или рефреша (если нужно вручную)
+    setUser: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
+      state.user = action.payload.user;
+      state.accessToken = action.payload.accessToken;
+      state.isAuth = true;
+    },
     logout: (state) => {
       state.user = null;
       state.isAuth = false;
-      state.token = null;
+      state.accessToken = null;
       localStorage.removeItem('token');
     },
-    setUser: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
-            state.user = action.payload.user;
-            state.token = action.payload.accessToken;
-            state.isAuth = true;
-            // Важно сохранять токен, чтобы после перезагрузки страницы он подтянулся в initialState
-            localStorage.setItem('token', action.payload.accessToken);
-        },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.accessToken;
-        state.isAuth = true;
-      })
-      .addCase(checkAuth.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isAuth = true;
-      })
-      .addCase(checkAuth.rejected, (state) => {
-        state.isAuth = false;
-        state.user = null;
-      });
+    // Здесь можно добавить обработку thunks (login.fulfilled и т.д.)
+    // Не забывайте сохранять объект в localStorage в самих thunks или сервисе!
   }
 });
 

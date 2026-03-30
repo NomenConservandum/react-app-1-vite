@@ -9,8 +9,8 @@ export const login = createAsyncThunk(
       // Путь из вашего swagger: /api/Auth/Login
       const response = await api.post("/api/Auth/Login", data);
       
-      const token = response.data.token || response.data.accessToken;
-      localStorage.setItem("token", token);
+      const token = response.data;
+      localStorage.setItem('token', JSON.stringify(response.data));
 
       return {
         user: response.data.user || null,
