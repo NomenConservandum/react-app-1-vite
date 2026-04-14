@@ -9,7 +9,7 @@ interface UserState {
 }
 
 // Функция для извлечения токена при загрузке страницы
-const getInitialToken = (): string | null => {
+const getInitialToken = (): string | null => { // you better move it to the utils folder
   const data = localStorage.getItem('token');
   if (!data) return null;
   try {

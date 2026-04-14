@@ -2,6 +2,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api";
 import type { User, RegisterUserData } from "../../types/api";
 
+
+// let's move 'api/' into .env
+// you can move paths into static vars
+// you can use axios.type
 export const login = createAsyncThunk(
   "user/login",
   async (data: { email: string; password: string }, { rejectWithValue }) => {

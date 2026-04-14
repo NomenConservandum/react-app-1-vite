@@ -39,7 +39,7 @@ function App() {
     );
   }
 
-  return (
+  return ( // next mui provider instead of cssbaseline; material ui; you better use 'path' instead path+label
     <ColorModeContext.Provider value={{ toggleTheme }}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <CssBaseline />

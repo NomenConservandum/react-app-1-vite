@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, Paper, Typography, Box, Fade } from '@mui/material';
+import { Container, Paper, Typography, Fade } from '@mui/material';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import { fetchRandomQuote } from '../store/quotesSlice';
 import { CustomButton } from '../ui/CustomButton';
 import type { RootState, AppDispatch } from '../store/store';
+import type { QuoteResponse } from '../types/api';
 
 const RandomQuotePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { currentQuote } = useSelector((state: RootState) => state.quotes);
+  const { currentQuote } = useSelector((state: RootState) => state.quotes) as { currentQuote: QuoteResponse | null };
   const { isLoading } = useSelector((state: RootState) => state.settings);
 
   useEffect(() => { dispatch(fetchRandomQuote()); }, [dispatch]);
@@ -24,9 +25,7 @@ const RandomQuotePage: React.FC = () => {
           <Typography variant="subtitle1" color="primary" sx={{ mb: 4 }}>
             — {currentQuote?.username || 'Аноним'}
           </Typography>
-          <CustomButton onClick={() => dispatch(fetchRandomQuote())} disabled={isLoading}>
-            Другая цитата
-          </CustomButton>
+          <CustomButton onClick={() => dispatch(fetchRandomQuote())} disabled={isLoading}>Другая цитата</CustomButton>
         </Paper>
       </Fade>
     </Container>

@@ -5,14 +5,17 @@ import { fetchQuotesList } from '../store/quotesSlice';
 import { CustomButton } from '../ui/CustomButton';
 import type { RootState, AppDispatch } from '../store/store';
 import HistoryIcon from '@mui/icons-material/History';
+import type { QuoteResponse } from '../types/api';
 
 const QuotesListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { allQuotes } = useSelector((state: RootState) => state.quotes);
+  const { allQuotes } = useSelector((state: RootState) => state.quotes) as { allQuotes: QuoteResponse[] };
   const { isLoading } = useSelector((state: RootState) => state.settings);
   const [offset, setOffset] = useState(0);
 
-  useEffect(() => { dispatch(fetchQuotesList({ offset: 0, limit: 10 })); }, [dispatch]);
+  useEffect(() => { 
+    dispatch(fetchQuotesList({ offset: 0, limit: 10 })); 
+  }, [dispatch]);
 
   const handleMore = () => {
     const next = offset + 10;
@@ -22,16 +25,16 @@ const QuotesListPage: React.FC = () => {
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-
       <Divider sx={{ mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.disabled' }}>
-            <HistoryIcon fontSize="large" />
-            <Typography variant="h4">ЛЕНТА ЦИТАТ</Typography>
+          <HistoryIcon fontSize="large" />
+          <Typography variant="h4">ЛЕНТА ЦИТАТ</Typography>
         </Box>
       </Divider>
+      
       <Grid container spacing={2}>
         {allQuotes.map((q, i) => (
-          <Grid item xs={12} key={i}>
+          <Grid size={12} key={i}>
             <Card variant="outlined" sx={{ borderRadius: 3 }}>
               <CardContent>
                 <Typography variant="body1" sx={{ mb: 1 }}>{q.quoteText}</Typography>
@@ -44,6 +47,7 @@ const QuotesListPage: React.FC = () => {
           </Grid>
         ))}
       </Grid>
+      
       <Box sx={{ textAlign: 'center', mt: 4 }}>
         <CustomButton onClick={handleMore} variant="text" disabled={isLoading}>
           Загрузить еще

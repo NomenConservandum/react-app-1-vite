@@ -35,6 +35,7 @@ export const routes: IRoute[] = [
   },
 
   // Защищенные страницы (Доступны только после логина)
+  // move authWrapper upper the line and move the pages to an array and check isPrivate
   { 
     path: "/profile", 
     label: "Профиль", 

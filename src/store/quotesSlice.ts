@@ -1,25 +1,52 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../utils/api';
+import type { QuoteResponse } from '../types/api';
+import { setLoading, setError } from './settingsSlice';
+
+interface QuotesState {
+  currentQuote: QuoteResponse | null;
+  allQuotes: QuoteResponse[];
+}
+
+const initialState: QuotesState = {
+  currentQuote: null,
+  allQuotes: [],
+};
 
 export const fetchRandomQuote = createAsyncThunk('quotes/fetchRandom', async () => {
   const response = await api.get('/api/Quote/GetRand');
-  return response.data;
+  return response.data as QuoteResponse;
 });
 
 export const fetchQuotesList = createAsyncThunk(
-  'quotes/fetchList', 
+  'quotes/fetchList',
   async ({ offset, limit }: { offset: number; limit: number }) => {
     const response = await api.get(`/api/Quote/${offset}/${limit}`);
-    return response.data;
+    return response.data as QuoteResponse[];
+  }
+);
+
+export const postQuote = createAsyncThunk(
+  'quotes/post',
+  async (text: string, { dispatch }) => {
+    try {
+      dispatch(setLoading(true));
+      await api.post('/api/Quote', null, { params: { quoteText: text } });
+      dispatch(fetchRandomQuote());
+      dispatch(fetchQuotesList({ offset: 0, limit: 10 }));
+    } catch (error: any) {
+      const message = error.response?.data?.errors?.quoteText?.[0] || 'Ошибка публикации';
+      dispatch(setError(message));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
   }
 );
 
 const quotesSlice = createSlice({
   name: 'quotes',
-  initialState: {
-    currentQuote: null,
-    allQuotes: []
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -27,7 +54,6 @@ const quotesSlice = createSlice({
         state.currentQuote = action.payload;
       })
       .addCase(fetchQuotesList.fulfilled, (state, action) => {
-        // Логика пагинации
         if (action.meta.arg.offset === 0) {
           state.allQuotes = action.payload;
         } else {
@@ -38,37 +64,3 @@ const quotesSlice = createSlice({
 });
 
 export default quotesSlice.reducer;
-
-import { setLoading, setError } from './settingsSlice';
-
-export interface QuoteResponse {
-  quoteText: string;
-  username: string;
-  creationDate: string;
-}
-
-// Публикация цитаты через Query-параметр
-export const postQuote = createAsyncThunk(
-  'quotes/post',
-  async (text: string, { dispatch }) => {
-    try {
-      dispatch(setLoading(true));
-      // Передаем текст в params, чтобы axios добавил его в URL как ?quoteText=...
-      const response = await api.post('/api/Quote', null, {
-        params: { quoteText: text }
-      });
-      
-      // После успешной публикации обновляем список и случайную цитату
-      dispatch(fetchRandomQuote());
-      dispatch(fetchQuotesList({ offset: 0, limit: 10 }));
-      
-      return response.data;
-    } catch (error: any) {
-      const message = error.response?.data?.errors?.quoteText?.[0] || 'Ошибка публикации';
-      dispatch(setError(message));
-      throw error;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }
-);
