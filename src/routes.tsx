@@ -7,8 +7,6 @@ import QuotesListPage from "./pages/QuotesListPage";
 import RandomQuotePage from "./pages/RandomQuotePage";
 import CreateQuotePage from "./pages/CreateQuotePage";
 
-import { AuthWrapper } from "./wrappers/AuthWrapper";
-
 export interface IRoute {
   path: string;
   label: string;
@@ -26,20 +24,19 @@ export const routes: IRoute[] = [
   { 
     path: "/login", 
     label: "Вход", 
-    element: <LoginPage /> 
+    element: <LoginPage />
   },
   { 
     path: "/register", 
     label: "Регистрация", 
-    element: <RegisterPage /> 
+    element: <RegisterPage />
   },
 
   // Защищенные страницы (Доступны только после логина)
-  // move authWrapper upper the line and move the pages to an array and check isPrivate
   { 
     path: "/profile", 
     label: "Профиль", 
-    element: <AuthWrapper><ProfilePage /></AuthWrapper>,
+    element: <ProfilePage />,
     isPrivate: true 
   },
 
@@ -47,19 +44,19 @@ export const routes: IRoute[] = [
   { 
     path: "/quotes", 
     label: "Лента цитат", 
-    element: <AuthWrapper><QuotesListPage /></AuthWrapper>,
+    element: <QuotesListPage />,
     isPrivate: true 
   },
   { 
     path: "/quotes/random", 
     label: "Случайная мысль", 
-    element: <AuthWrapper><RandomQuotePage /></AuthWrapper>,
+    element: <RandomQuotePage />,
     isPrivate: true 
   },
   { 
     path: "/quotes/create", 
     label: "Добавить свою", 
-    element: <AuthWrapper><CreateQuotePage /></AuthWrapper>,
+    element: <CreateQuotePage />,
     isPrivate: true 
   },
 ];
