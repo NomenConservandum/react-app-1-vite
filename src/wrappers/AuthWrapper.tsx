@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 import type { RootState } from "../store/store";
@@ -12,11 +12,14 @@ import { Box, CircularProgress } from "@mui/material";
 export const AuthWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isInit, setIsInit] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const location = useLocation(); // Add this to get current path
+  const location = useLocation();
   
   const isAuth = useSelector((state: RootState) => state.user.isAuth);
 
+  const didInit = useRef(false);
   useEffect(() => {
+    if (didInit.current) return;
+    didInit.current = true;
     const init = async () => {
       if (localStorage.getItem('token')) {
         await dispatch(checkAuth());
@@ -24,7 +27,7 @@ export const AuthWrapper: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsInit(true);
     };
     init();
-  }, [dispatch]);
+  }, []);
 
   if (!isInit) {
     return (
@@ -40,7 +43,7 @@ export const AuthWrapper: React.FC<{ children: React.ReactNode }> = ({ children 
     return <Navigate to="/login" replace />;
   }
 
-  if ((route?.path === "/register" || route?.path === "/login") && isAuth) {
+  if (route?.isUnAuth && isAuth) {
     return <Navigate to="/profile" replace />;
   }
 

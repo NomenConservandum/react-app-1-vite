@@ -12,6 +12,7 @@ export interface IRoute {
   label: string;
   element: React.ReactNode;
   isPrivate?: boolean; // Флаг для удобства фильтрации в меню
+  isUnAuth?: boolean; // Флаг для страниц, которые должен видеть лишь неавторизированный пользователь
 }
 
 export const routes: IRoute[] = [
@@ -19,17 +20,20 @@ export const routes: IRoute[] = [
   { 
     path: "/", 
     label: "Главная", 
-    element: <LandingPage /> 
+    element: <LandingPage />,
+    isUnAuth: true,
   },
   { 
     path: "/login", 
     label: "Вход", 
-    element: <LoginPage />
+    element: <LoginPage />,
+    isUnAuth: true,
   },
   { 
     path: "/register", 
     label: "Регистрация", 
-    element: <RegisterPage />
+    element: <RegisterPage />,
+    isUnAuth: true,
   },
 
   // Защищенные страницы (Доступны только после логина)
